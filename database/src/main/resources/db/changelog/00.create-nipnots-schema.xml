@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd"
+  logicalFilePath="00.create-version-schema.xml">
+
+  <changeSet id="create-nipnots-schema" author="defra">
+    <comment>Create Nipnots Schema</comment>
+    <sql>
+      CREATE SCHEMA Nipnots;
+    </sql>
+    <rollback>
+      DROP SCHEMA Nipnots;
+    </rollback>
+  </changeSet>
+
+  <changeSet id="create-nipnots-tables" author="defra">
+    <comment>Create Nipnots tables</comment>
+    <sql>
+      CREATE TABLE Nipnots.Notification (
+        NotificationId UNIQUEIDENTIFIER CONSTRAINT PK_Notification_NotificationId PRIMARY KEY DEFAULT NEWID(),
+        LegalEntityAccountId UNIQUEIDENTIFIER NOT NULL,
+        LegalEntityName NVARCHAR(256) NOT NULL,
+        LegalEntityPostcode NVARCHAR(8) NOT NULL,
+        CreatedAt DATETIME2(3) NOT NULL DEFAULT GETUTCDATE(),
+        FileName NVARCHAR(256) NOT NULL,
+        ReferenceNumber NVARCHAR(256) NOT NULL,
+        Active BIT NOT NULL DEFAULT 0
+      );
+
+      CREATE TABLE Nipnots.NotificationSubstance (
+        NotificationSubstanceId UNIQUEIDENTIFIER CONSTRAINT PK_NotificationSubstance_NotificationSubstanceId PRIMARY KEY DEFAULT NEWID(),
+        NotificationId UNIQUEIDENTIFIER NOT NULL,
+        SubstanceName NVARCHAR(max),
+        EcNumber NVARCHAR(max),
+        CasNumber NVARCHAR(max),
+        EchaRegistrationNumber NVARCHAR(max),
+        IupacName NVARCHAR(max),
+        OtherNames NVARCHAR(max),
+        CasName NVARCHAR(max),
+        OtherIdentityCodes NVARCHAR(max),
+        SubstanceSubjectToAuthorisation NVARCHAR(max),
+        SubstanceSubjectToRestriction NVARCHAR(max),
+        AdditionalInformationRelevantToAppropriateRiskManagement NVARCHAR(max),
+        MolecularFormula NVARCHAR(max),
+        StructuralFormula NVARCHAR(max),
+        InformationOnOpticalActivityAndTypicalRatioOfIsomers NVARCHAR(max),
+        MolecularWeight NVARCHAR(max),
+        DegreeOfPurity NVARCHAR(max),
+        NatureOfImpurities NVARCHAR(max),
+        PercentageOfMainImpurities NVARCHAR(max),
+        NatureAndOrderOfMagnitudeOfAnyAdditives NVARCHAR(max),
+        SpectralData NVARCHAR(max),
+        HighPressureLiquidChromatogramGasChromatogram NVARCHAR(max),
+        AnalyticalMethodsForIdentificationOfSubstanceImpuritiesAndAdditives NVARCHAR(max),
+        TonnageBand NVARCHAR(max)
+      );
+
+      ALTER TABLE Nipnots.NotificationSubstance ADD CONSTRAINT FK_NotificationSubstance_NotificationId FOREIGN KEY(NotificationId) REFERENCES Nipnots.Notification(NotificationId);
+
+      CREATE UNIQUE NONCLUSTERED INDEX IDX_Nofication_LegalEntityAccountIdActive ON Nipnots.Notification(LegalEntityAccountId, Active) WHERE Active=1;
+      CREATE NONCLUSTERED INDEX IDX_Notification_LegalEntityAccountId ON Nipnots.Notification(LegalEntityAccountId);
+    </sql>
+    <rollback>
+      DROP TABLE Nipnots.NotificationSubstance;
+      DROP TABLE Nipnots.Notification;
+    </rollback>
+  </changeSet>
+
+</databaseChangeLog>

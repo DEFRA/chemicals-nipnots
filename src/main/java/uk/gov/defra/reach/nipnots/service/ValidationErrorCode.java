@@ -1,0 +1,11 @@
+package uk.gov.defra.reach.nipnots.service;
+
+public enum ValidationErrorCode {
+  WRONG_NUMBER_OF_COLUMNS,
+  INCORRECT_TEMPLATE_COLUMN_VALUES,
+  MISSING_EXAMPLE_ROW,
+  MISSING_DATA_ROW,
+  FILE_SIZE_LIMIT_EXCEEDED,
+  UNREADABLE_FILE,
+  WRONG_FORMAT
+}
