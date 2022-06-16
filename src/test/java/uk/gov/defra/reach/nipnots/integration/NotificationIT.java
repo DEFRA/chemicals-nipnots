@@ -30,7 +30,7 @@ import uk.gov.defra.reach.nipnots.dto.NipNotResponse;
  * End-to-end test designed to run against a live reach-nipnots instance complete with working dependencies.
  */
 @TestMethodOrder(OrderAnnotation.class)
-public class NotificationE2E {
+public class NotificationIT {
 
   /**
    * JWT for industry1@email.com valid until December 2024.
@@ -53,6 +53,7 @@ public class NotificationE2E {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setBearerAuth(JWT_TOKEN);
+    headers.add("x-forwarded-for", "0.0.0.0");
     HttpEntity<NipNotRequest> request = new HttpEntity<>(new NipNotRequest(storageLocation, "nipnots.xlsx"), headers);
 
     NipNotResponse response = REST_TEMPLATE.postForObject(NIPNOTS_SERVICE_URL + "/notification", request, NipNotResponse.class);

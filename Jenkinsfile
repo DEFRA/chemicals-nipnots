@@ -34,6 +34,7 @@ node(label: 'autoSlaveLive') {
 
     withEnv(environmentVariables) {
         def databases = [APP]
+        def STORAGE_CONTAINERS = []
         def runIntegrationTests = {
             withMaven(
                     options: [artifactsPublisher(disabled: true), jacocoPublisher(disabled: true)], mavenOpts: helper.getMavenOpts()
@@ -41,6 +42,6 @@ node(label: 'autoSlaveLive') {
                 sh(label: "Run e2e tests", script: "mvn verify -P e2e-tests -DREACH_MONITORING_URL=https://reach-monitoring-dev.azurewebsites.net -DCHEMICAL_REGULATIONS_URL=https://comply-chemical-regulations.service.gov.uk/ -DREACH_NOTIFY_URL=https://reach-notify-dev.azurewebsites.net -DFILE_SERVICE_URL=https://reach-file-service-dev.azurewebsites.net -DNIPNOTS_SERVICE_URL=https://${APP_NAME}.${APPLICATION_URL_SUFFIX}")
             }
         }
-        reachPipeline(databases, null, runIntegrationTests)
+        reachPipeline(databases, STORAGE_CONTAINERS, runIntegrationTests)
     }
 }

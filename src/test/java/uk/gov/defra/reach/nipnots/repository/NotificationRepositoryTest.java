@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.defra.reach.nipnots.entity.NipNotsNumber;
 import uk.gov.defra.reach.nipnots.entity.Notification;
 
 @ExtendWith(SpringExtension.class)
@@ -56,6 +57,14 @@ class NotificationRepositoryTest {
 
     Optional<Notification> activeNotification = notificationRepository.findByLegalEntityAccountIdAndActiveIsTrue(legalEntityId);
     assertThat(activeNotification).isPresent().map(Notification::getId).contains(notification2.getId());
+  }
+
+  @Test
+  void shouldCheckIfReferenceNumberExists() {
+    notificationRepository.save(createNotification(UUID.randomUUID()));
+
+    assertThat(notificationRepository.existsByReferenceNumberContains("xxx")).isFalse();
+    assertThat(notificationRepository.existsByReferenceNumberContains("ef1")).isTrue();
   }
 
   private static Notification createNotification(UUID legalEntityId) {
